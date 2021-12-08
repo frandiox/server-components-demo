@@ -18,7 +18,7 @@ export default function NoteList({searchText}) {
   // We don't encourage this in real apps. There are far safer ways to access
   // data in a real application!
   const notes = db.query(
-    `select * from notes where title ilike $1 order by id desc`,
+    `select * from notes where title like $1 order by id desc`,
     ['%' + searchText + '%']
   ).rows;
 

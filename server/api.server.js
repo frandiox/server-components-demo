@@ -24,12 +24,13 @@ const {readFileSync} = require('fs');
 const {unlink, writeFile} = require('fs').promises;
 const {renderToPipeableStream} = require('react-server-dom-webpack/writer');
 const path = require('path');
-const {Pool} = require('pg');
+
 const React = require('react');
 const ReactApp = require('../src/App.server').default;
 
 // Don't keep credentials in the source tree in a real app!
-const pool = new Pool(require('../credentials'));
+const pool = require('./db');
+const seed = require('./seed');
 
 const PORT = process.env.PORT || 4000;
 const app = express();
@@ -37,29 +38,31 @@ const app = express();
 app.use(compress());
 app.use(express.json());
 
-app
-  .listen(PORT, () => {
-    console.log(`React Notes listening at ${PORT}...`);
-  })
-  .on('error', function(error) {
-    if (error.syscall !== 'listen') {
-      throw error;
-    }
-    const isPipe = (portOrPipe) => Number.isNaN(portOrPipe);
-    const bind = isPipe(PORT) ? 'Pipe ' + PORT : 'Port ' + PORT;
-    switch (error.code) {
-      case 'EACCES':
-        console.error(bind + ' requires elevated privileges');
-        process.exit(1);
-        break;
-      case 'EADDRINUSE':
-        console.error(bind + ' is already in use');
-        process.exit(1);
-        break;
-      default:
+seed(pool).then(() =>
+  app
+    .listen(PORT, () => {
+      console.log(`React Notes listening at ${PORT}...`);
+    })
+    .on('error', function(error) {
+      if (error.syscall !== 'listen') {
         throw error;
-    }
-  });
+      }
+      const isPipe = (portOrPipe) => Number.isNaN(portOrPipe);
+      const bind = isPipe(PORT) ? 'Pipe ' + PORT : 'Port ' + PORT;
+      switch (error.code) {
+        case 'EACCES':
+          console.error(bind + ' requires elevated privileges');
+          process.exit(1);
+          break;
+        case 'EADDRINUSE':
+          console.error(bind + ' is already in use');
+          process.exit(1);
+          break;
+        default:
+          throw error;
+      }
+    })
+);
 
 function handleErrors(fn) {
   return async function(req, res, next) {
@@ -123,10 +126,16 @@ app.post(
   '/notes',
   handleErrors(async function(req, res) {
     const now = new Date();
-    const result = await pool.query(
-      'insert into notes (title, body, created_at, updated_at) values ($1, $2, $3, $3) returning id',
+    await pool.query(
+      'insert into notes (title, body, created_at, updated_at) values ($1, $2, $3, $3);',
       [req.body.title, req.body.body, now]
     );
+    // Current published version of SQLite does not support RETURNING
+    const result = await pool.query(
+      'select id from notes where created_at = ?;',
+      [now]
+    );
+
     const insertedId = result.rows[0].id;
     await writeFile(
       path.resolve(NOTES_PATH, `${insertedId}.md`),

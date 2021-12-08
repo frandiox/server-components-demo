@@ -8,15 +8,11 @@
 
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
-const {Pool} = require('pg');
 const {readdir, unlink, writeFile} = require('fs/promises');
 const startOfYear = require('date-fns/startOfYear');
-const credentials = require('../credentials');
 
 const NOTES_PATH = './notes';
-const pool = new Pool(credentials);
 
 const now = new Date();
 const startOfThisYear = startOfYear(now);
@@ -29,15 +25,17 @@ function randomDateBetween(start, end) {
 
 const dropTableStatement = 'DROP TABLE IF EXISTS notes;';
 const createTableStatement = `CREATE TABLE notes (
-  id SERIAL PRIMARY KEY,
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL,
   title TEXT,
   body TEXT
 );`;
 const insertNoteStatement = `INSERT INTO notes(title, body, created_at, updated_at)
-  VALUES ($1, $2, $3, $3)
-  RETURNING *`;
+  VALUES ($1, $2, $3, $3);
+  `;
+const getNoteStatement = `SELECT * FROM notes WHERE created_at = ?;
+  `;
 const seedData = [
   [
     'Meeting Notes',
@@ -61,11 +59,15 @@ notes in this app! These note live on the server in the \`notes\` folder.
   ['I wrote this note today', 'It was an excellent note.', now],
 ];
 
-async function seed() {
+module.exports = async function seed(pool) {
   await pool.query(dropTableStatement);
   await pool.query(createTableStatement);
   const res = await Promise.all(
-    seedData.map((row) => pool.query(insertNoteStatement, row))
+    seedData.map((row) =>
+      pool
+        .query(insertNoteStatement, row)
+        .then(() => pool.query(getNoteStatement, [row[2]]))
+    )
   );
 
   const oldNotes = await readdir(path.resolve(NOTES_PATH));
@@ -87,6 +89,4 @@ async function seed() {
       });
     })
   );
-}
-
-seed();
+};
