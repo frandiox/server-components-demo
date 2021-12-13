@@ -1,6 +1,9 @@
-const sqlite3 = require('sqlite3').verbose();
+import Sqlite3 from 'sqlite3';
+
+const sqlite3 = Sqlite3.verbose();
 const db = new sqlite3.Database(__dirname + '/db.sqlite');
 
+// Mock PG 'query'
 db.query = function(sql, params) {
   if (params && !Array.isArray(params)) {
     throw new Error('second parameter must be an array');
@@ -17,4 +20,4 @@ db.query = function(sql, params) {
   });
 };
 
-module.exports = db;
+export default db;

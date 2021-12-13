@@ -8,9 +8,9 @@
 
 'use strict';
 
-const path = require('path');
-const {readdir, unlink, writeFile} = require('fs/promises');
-const startOfYear = require('date-fns/startOfYear');
+import path from 'path';
+import {readdir, unlink, writeFile} from 'fs/promises';
+import startOfYear from 'date-fns/startOfYear';
 
 const NOTES_PATH = './notes';
 
@@ -59,7 +59,7 @@ notes in this app! These note live on the server in the \`notes\` folder.
   ['I wrote this note today', 'It was an excellent note.', now],
 ];
 
-module.exports = async function seed(pool) {
+export default async function seed(pool) {
   await pool.query(dropTableStatement);
   await pool.query(createTableStatement);
   const res = await Promise.all(
@@ -89,4 +89,4 @@ module.exports = async function seed(pool) {
       });
     })
   );
-};
+}
