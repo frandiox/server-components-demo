@@ -8,7 +8,9 @@
 
 import {createContext, useContext} from 'react';
 
-export const LocationContext = createContext();
+export const LocationContext = (globalThis.__LocationContext =
+  globalThis.__LocationContext || createContext());
+
 export function useLocation() {
   return useContext(LocationContext);
 }
