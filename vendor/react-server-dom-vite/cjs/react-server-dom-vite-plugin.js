@@ -103,13 +103,6 @@ function ReactFlightVitePlugin() {
   return {
     name: 'vite-plugin-react-server-components',
     enforce: 'pre',
-    config: function () {
-      return {
-        optimizeDeps: {
-          include: ['react-server-dom-vite', 'react-server-dom-vite/writer']
-        }
-      };
-    },
     configResolved: function (_config) {
       config = _config;
     },
