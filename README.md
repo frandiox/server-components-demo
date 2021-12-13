@@ -1,4 +1,6 @@
-# React Server Components Demo
+# React Server Components Demo (Vite version)
+
+> This is a modified version of the original demo that works with Vite -- **HIGHLY EXPERIMENTAL**
 
 * [What is this?](#what-is-this)
 * [When will I be able to use this?](#when-will-i-be-able-to-use-this)
@@ -32,7 +34,7 @@ You will need to have nodejs >=14.9.0 in order to run this demo. [Node 14 LTS](h
 
 (Or `npm run start:prod` for a production build.)
 
-Then open http://localhost:4000.
+Then open http://localhost:3000.
 
 The app won't work until you set up the database, as described below.
 
@@ -58,13 +60,11 @@ This demo uses SQLite3. Nothing to setup.
 
 The demo is a note-taking app called **React Notes**. It consists of a few major parts:
 
-- It uses a Webpack plugin (not defined in this repo) that allows us to only include client components in build artifacts
-- An Express server that:
+- It uses a Vite plugin (not defined in this repo) that allows us to only include client components in build artifacts
+- A Node.js server that:
   - Serves API endpoints used in the app
   - Renders Server Components into a special format that we can read on the client
 - A React app containing Server and Client components used to build React Notes
-
-This demo is built on top of our Webpack plugin, but this is not how we envision using Server Components when they are stable. They are intended to be used in a framework that supports server rendering — for example, in Next.js. This is an early demo -- the real integration will be developed in the coming months. Learn more in the [announcement post](https://reactjs.org/server-components).
 
 ### Interesting things to try
 
@@ -73,7 +73,7 @@ This demo is built on top of our Webpack plugin, but this is not how we envision
 - Search for any title. With the search text still in the search input, create a new note with a title matching the search text. What happens?
 - Search while on Slow 3G, observe the inline loading indicator.
 - Switch between two notes back and forth. Observe we don't send new responses next time we switch them again.
-- Uncomment the `fetch('http://localhost:4000/sleep/....')` call in `Note.server.js` or `NoteList.server.js` to introduce an artificial delay and trigger Suspense.
+- Uncomment the `fetch('http://127.0.0.1:3000/sleep/....')` call in `Note.server.js` or `NoteList.server.js` to introduce an artificial delay and trigger Suspense.
   - If you only uncomment it in `Note.server.js`, you'll see the fallback every time you open a note.
   - If you only uncomment it in `NoteList.server.js`, you'll see the list fallback on first page load.
   - If you uncomment it in both, it won't be very interesting because we have nothing new to show until they both respond.

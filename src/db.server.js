@@ -8,6 +8,7 @@
 
 // THIS IS JUST A QUICK react-sqlite3 IMPLEMENTATION FOLLOWING react-pg
 
+import {fileURLToPath} from 'url';
 import {unstable_getCacheForType} from 'react';
 import sqlite3 from 'sqlite3';
 
@@ -161,4 +162,9 @@ SQLite.prototype.query = function(query, values) {
   return result;
 };
 
-export const db = new SQLite(__dirname.replace(/\/src$/, '/server/db.sqlite'));
+export const db = new SQLite(
+  fileURLToPath(import.meta.url).replace(
+    /\/src\/db.server.js$/,
+    '/server/db.sqlite'
+  )
+);

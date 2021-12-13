@@ -7,18 +7,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@babel/core": "7.12.3",
-    "@babel/register": "^7.12.1",
-    "babel-loader": "8.1.0",
-    "babel-preset-react-app": "10.0.0",
-    "compression": "^1.7.4",
-    "concurrently": "^5.3.0",
+    "@vitejs/plugin-react": "^1.1.0",
     "date-fns": "^2.16.1",
     "excerpts": "^0.0.3",
-    "express": "^4.17.1",
-    "html-webpack-plugin": "5.5.0",
     "marked": "^1.2.5",
-    "nodemon": "^2.0.6",
     "react": "0.0.0-experimental-0cc724c77-20211125",
     "react-dom": "0.0.0-experimental-0cc724c77-20211125",
     "react-error-boundary": "^3.1.0",
@@ -27,35 +19,15 @@
     "react-server-dom-vite": "file:vendor/react-server-dom-vite",
     "sanitize-html": "^2.2.0",
     "sqlite3": "^5.0.2",
-    "webpack": "5.64.4",
-    "webpack-cli": "4.9.1"
+    "vite": "^2.7.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
     "prettier": "1.19.1"
   },
   "scripts": {
-    "start": "concurrently \"npm run server:dev\" \"npm run bundler:dev\"",
-    "start:prod": "concurrently \"npm run server:prod\" \"npm run bundler:prod\"",
-    "server:dev": "cross-env NODE_ENV=development nodemon -- --conditions=react-server server",
-    "server:prod": "cross-env NODE_ENV=production nodemon -- --conditions=react-server server",
-    "bundler:dev": "cross-env NODE_ENV=development nodemon -- scripts/build.js",
-    "bundler:prod": "cross-env NODE_ENV=production nodemon -- scripts/build.js",
+    "start": "vite",
+    "build": "vite build",
     "prettier": "prettier --write **/*.js"
-  },
-  "babel": {
-    "presets": [
-      [
-        "react-app",
-        {
-          "runtime": "automatic"
-        }
-      ]
-    ]
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "build/*"
-    ]
   }
 }
