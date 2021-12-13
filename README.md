@@ -1,6 +1,7 @@
 # React Server Components Demo (Vite version)
 
 > This is a modified version of the original demo that works with Vite -- **HIGHLY EXPERIMENTAL**
+> The original source of react-server-dom-vite package is based on @shopify/hydrogen and is [located here](https://github.com/frandiox/react/tree/rsc-vite).
 
 * [What is this?](#what-is-this)
 * [When will I be able to use this?](#when-will-i-be-able-to-use-this)

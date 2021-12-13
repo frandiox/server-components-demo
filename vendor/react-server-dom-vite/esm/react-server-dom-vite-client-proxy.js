@@ -24,13 +24,21 @@ function _defineProperty(obj, key, value) {
   return obj;
 }
 
+function isReactComponent(component) {
+  if (component) {
+    return typeof component === 'function' || typeof component.render === 'function' || component.$$typeof === Symbol.for('react.element');
+  }
+
+  return false;
+}
+
 function wrapInClientProxy(_ref) {
   var id = _ref.id,
       name = _ref.name,
       named = _ref.named,
       component = _ref.component;
 
-  if (!component || typeof component !== 'function' && !Object.prototype.hasOwnProperty.call(component, 'render')) {
+  if (!isReactComponent(component)) {
     // This is not a React component, return it as is.
     return component;
   } // Use object syntax here to make sure the function name
@@ -39,7 +47,11 @@ function wrapInClientProxy(_ref) {
 
   var render = _defineProperty({}, name, function (props) {
     return createElement(component, props);
-  })[name]; // React accesses the `render` function directly when encountring this type
+  })[name];
+
+  {
+    render.displayName = name;
+  } // React accesses the `render` function directly when encountring this type
 
 
   var componentRef = Object.create(null);

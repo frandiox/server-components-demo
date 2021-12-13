@@ -31,7 +31,12 @@ function resolveModuleReference(moduleData) {
 
 var allClientComponents = {
   __INJECTED_CLIENT_IMPORTERS__: null
-};
+}; // Mock client component imports during testing
+
+if (typeof jest !== 'undefined') {
+  global.allClientComponents = allClientComponents;
+}
+
 function importClientComponent(moduleId) {
   var modImport = allClientComponents[moduleId];
 
@@ -42,6 +47,7 @@ function importClientComponent(moduleId) {
   return modImport();
 } // The module cache contains all the modules we've preloaded so far.
 // If they're still pending they're a thenable.
+
 
 var moduleCache = new Map(); // Start preloading the modules since we might need them soon.
 // This function doesn't suspend.
